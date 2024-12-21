@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Http;
 
 class ShortUrlController extends Controller
 {
@@ -17,7 +18,16 @@ class ShortUrlController extends Controller
                 'url.string' => 'la URL debe ser un texto'
             ]);
 
-            return response()->json($validated);
+            $url = $validated['url'];
+
+            $response = Http::get('https://tinyurl.com/api-create.php', [
+                'url' => $url
+            ]);
+
+            return response()->json([
+                'url' => $response->body(),
+            ]);
+
         } catch (ValidationException $e) {
             return response()->json([
                 'errors' => $e->errors(),

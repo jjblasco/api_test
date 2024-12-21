@@ -56,4 +56,17 @@ class urlApiTest extends TestCase
             'url' => ['la URL es requerida'],
         ]);
     }
+
+    public function test_response_from_tinyurl(): void
+    {
+        $response = $this->postJson('/api/v1/short-urls', [
+            'url' => 'https://example.com',
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'url',
+        ]);
+
+    }
 }
