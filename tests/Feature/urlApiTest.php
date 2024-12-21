@@ -13,8 +13,47 @@ class urlApiTest extends TestCase
      */
     public function test_short_urls_ruote_exists(): void
     {
-        $response = $this->post('api/v1/short-urls');
+        $response = $this->postJson('/api/v1/short-urls', [
+            'url' => 'https://example.com',
+        ]);
 
         $response->assertStatus(200);
+    }
+
+    public function test_valid_url(): void
+    {
+        $response = $this->postJson('/api/v1/short-urls', [
+            'url' => 'https://example.com',
+        ]);
+
+        $response->assertStatus(200);
+    }
+
+    public function test_when_url_is_not_string(): void
+    {
+        $response = $this->postJson('/api/v1/short-urls', [
+            'url' => 123,
+        ]);
+
+        $response->assertStatus(422);
+
+        $response->assertJsonValidationErrors('url');
+        $response->assertJsonFragment([
+            'url' => ['la URL debe ser un texto'],
+        ]);
+    }
+
+    public function test_when_url_is_void(): void
+    {
+        $response = $this->postJson('/api/v1/short-urls', [
+            'url' => '',
+        ]);
+
+        $response->assertStatus(422);
+
+        $response->assertJsonValidationErrors('url');
+        $response->assertJsonFragment([
+            'url' => ['la URL es requerida'],
+        ]);
     }
 }
