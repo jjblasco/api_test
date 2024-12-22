@@ -10,6 +10,8 @@ class ShortUrlController extends Controller
 {
     public function getJson(Request $request)
     {
+        $token = $request->bearerToken();
+
         try {
             $validated = $request->validate([
                 'url' => 'required|string',

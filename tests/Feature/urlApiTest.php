@@ -8,32 +8,33 @@ use Tests\TestCase;
 
 class urlApiTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_short_urls_ruote_exists(): void
+    private function url_with_token($url)
     {
-        $response = $this->postJson('/api/v1/short-urls', [
-            'url' => 'https://example.com',
+        $token = '[]{}()';
+        return $this->withHeaders([
+            'Authorization' => $token,
+        ])->postJson('/api/v1/short-urls', [
+            'url' => $url,
         ]);
+    }
+
+    public function test_short_urls_route_exists(): void
+    {
+        $response = $this->url_with_token('https://www.example.com');
 
         $response->assertStatus(200);
     }
 
     public function test_valid_url(): void
     {
-        $response = $this->postJson('/api/v1/short-urls', [
-            'url' => 'https://example.com',
-        ]);
+        $response = $this->url_with_token('https://www.example.com');
 
         $response->assertStatus(200);
     }
 
     public function test_when_url_is_not_string(): void
     {
-        $response = $this->postJson('/api/v1/short-urls', [
-            'url' => 123,
-        ]);
+        $response = $this->url_with_token(1234);
 
         $response->assertStatus(422);
 
@@ -45,9 +46,7 @@ class urlApiTest extends TestCase
 
     public function test_when_url_is_void(): void
     {
-        $response = $this->postJson('/api/v1/short-urls', [
-            'url' => '',
-        ]);
+        $response = $this->url_with_token(null);
 
         $response->assertStatus(422);
 
@@ -59,9 +58,7 @@ class urlApiTest extends TestCase
 
     public function test_response_from_tinyurl(): void
     {
-        $response = $this->postJson('/api/v1/short-urls', [
-            'url' => 'https://example.com',
-        ]);
+        $response = $this->url_with_token('https://www.example.com');
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -69,4 +66,31 @@ class urlApiTest extends TestCase
         ]);
 
     }
+
+    public function test_invalid_token(): void
+    {
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer no-token',
+        ])->postJson('/api/v1/short-urls', [
+            'url' => 'https://www.example.com',
+        ]);
+
+        $response->assertStatus(401);
+        $response->assertJsonFragment([
+            'error' => 'Token inválido o ausente.',
+        ]);
+    }
+
+    public function test_missing_token(): void
+    {
+        $response = $this->postJson('/api/v1/short-urls', [
+            'url' => 'https://example.com',
+        ]);
+
+        $response->assertStatus(401);
+        $response->assertJsonFragment([
+            'error' => 'Token inválido o ausente.',
+        ]);
+    }
+
 }
