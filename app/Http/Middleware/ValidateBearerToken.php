@@ -15,7 +15,7 @@ class ValidateBearerToken
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $auth = $request->header('Authorization');
+        $auth = $request->bearerToken();
 
         if ($auth !== '[]{}()') {
             return response()->json(['error' => 'Token inválido o ausente.'], Response::HTTP_UNAUTHORIZED);
