@@ -1,0 +1,166 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Paréntesis y URL Shortener",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/v1/validate-parentheses": {
+            "post": {
+                "tags": [
+                    "Validación de Paréntesis"
+                ],
+                "summary": "Valida una cadena de paréntesis, corchetes y llaves",
+                "description": "Este endpoint valida que una cadena de paréntesis, corchetes y llaves esté correctamente balanceada.",
+                "operationId": "validateParentheses",
+                "requestBody": {
+                    "description": "Cadena de paréntesis a validar",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "expression"
+                                ],
+                                "properties": {
+                                    "expression": {
+                                        "type": "string",
+                                        "example": "{[()()]}"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "La cadena de paréntesis es válida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "La cadena es válida."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "La cadena no es válida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "La cadena de paréntesis no es válida."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/short-urls": {
+            "post": {
+                "tags": [
+                    "Acortador de URL"
+                ],
+                "summary": "Acorta una URL usando TinyURL",
+                "description": "Este endpoint acorta una URL proporcionada utilizando el servicio de TinyURL.",
+                "operationId": "shortenUrl",
+                "requestBody": {
+                    "description": "URL a acortar",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "url"
+                                ],
+                                "properties": {
+                                    "url": {
+                                        "type": "string",
+                                        "example": "https://www.example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "La URL fue acortada con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "url": {
+                                            "type": "string",
+                                            "example": "https://tinyurl.com/xyz123"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error al procesar la URL",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Error al acortar la URL."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Validación de Paréntesis",
+            "description": "Validación de Paréntesis"
+        },
+        {
+            "name": "Acortador de URL",
+            "description": "Acortador de URL"
+        }
+    ]
+}
