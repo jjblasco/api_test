@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Http;
 use App\Services\UrlShortenerService;
 
 class ShortUrlController extends Controller
