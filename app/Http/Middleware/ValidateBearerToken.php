@@ -15,12 +15,26 @@ class ValidateBearerToken
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $auth = $request->bearerToken();
+        $excludedRoutes = [
+            'api/documentation',
+            'docs/asset/*',
+            'api/docs',
+            'api/docs/*',
+            'docs/api-docs.json',
+        ];
 
+        foreach ($excludedRoutes as $route) {
+            if ($request->is($route)) {
+                return $next($request);
+            }
+        }
+
+        $auth = $request->bearerToken();
         if ($auth !== '[]{}()') {
             return response()->json(['error' => 'Token inválido o ausente.'], Response::HTTP_UNAUTHORIZED);
         }
 
         return $next($request);
     }
+
 }
