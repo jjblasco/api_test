@@ -12,7 +12,7 @@ class urlApiTest extends TestCase
     {
         $token = '[]{}()';
         return $this->withHeaders([
-            'Authorization' => $token,
+            'Authorization' => 'Bearer ' . $token,
         ])->postJson('/api/v1/short-urls', [
             'url' => $url,
         ]);
@@ -40,7 +40,7 @@ class urlApiTest extends TestCase
 
         $response->assertJsonValidationErrors('url');
         $response->assertJsonFragment([
-            'url' => ['la URL debe ser un texto'],
+            'url' => ["La URL debe tener un formato válido.","la URL debe ser un texto"],
         ]);
     }
 
